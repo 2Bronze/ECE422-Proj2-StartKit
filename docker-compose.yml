@@ -43,3 +43,13 @@ services:
     volumes:
       - ./:/mnt/locust
     command: -f /mnt/locust/locustfile.py --worker --master-host locust
+
+  scaler:
+    image: test
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+      placement:
+        constraints: [node.role == manager]
