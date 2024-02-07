@@ -45,7 +45,6 @@ services:
     command: -f /mnt/locust/locustfile.py --worker --master-host locust
 
   scaler:
-    build: ./docker-images/auto-scaler
     image: test:latest
     ports:
       - "4444:4444"
