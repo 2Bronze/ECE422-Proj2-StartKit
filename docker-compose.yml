@@ -45,14 +45,14 @@ services:
     command: -f /mnt/locust/locustfile.py --worker --master-host locust
 
   scaler:
-    web:
-      image: test
-      ports:
-        - "4444:4444"
-      deploy:
-        resources:
-          limits:
-            cpus: '0.25'
-            memory: 256M
-        placement:
-          constraints: [node.role == manager]
+    build: ./docker-images/auto-scaler
+    image: test:latest
+    ports:
+      - "4444:4444"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+      placement:
+        constraints: [node.role == manager]
