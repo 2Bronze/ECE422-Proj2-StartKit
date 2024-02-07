@@ -15,7 +15,7 @@ services:
     ports:
       - "6379:6379"
     deploy:
-     resources:  
+     resources:
         limits:
           cpus: '0.25'
           memory: 256M
@@ -29,3 +29,17 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+
+  locust:
+    image: locustio/locust
+    ports:
+     - "8089:8089"
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --master -H http://localhost:8000/
+
+  locust_worker:
+    image: locustio/locust
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host locust
