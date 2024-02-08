@@ -71,8 +71,8 @@ def interval_task():
     elif average_response_time < ACCEPTABLE_MIN:
         print("SCALING DOWN")
         scaler.scale_down(SERVICE_ID)
-    response_times[datetime.datetime().strftime('%H:%M:%S')] = (end-now)
-    docker_replicas[datetime.datetime().strftime('%H:%M:%S')] = scaler.replicas
+    response_times[datetime.datetime().now().strftime('%H:%M:%S')] = (end-now)
+    docker_replicas[datetime.datetime().now().strftime('%H:%M:%S')] = scaler.replicas
 
 
 scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10, max_instances=5)
