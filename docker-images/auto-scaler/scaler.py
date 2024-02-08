@@ -55,19 +55,20 @@ INTERVAL_TASK_ID = 'interval-task-id'
 
 def interval_task():
     now = time.time()
-    requests.get('http://10.2.15.184:8000')
+    for _ in range(5):
+        requests.get('http://10.2.15.184:8000')
     end = time.time()
     print("RESPONSE TIME")
-    print(end-now)
-    response_times[time.time()] = end-now
+    print((end-now)/5)
+    response_times[time.time()] = (end-now)/5
     docker_replicas[time.time()] = scaler.replicas
-    # if average_time > ???:
-        # scaler.scale_up("docker_id")
-    # elif average_time < ???:
-        # scaler.scale_down("docker_id")
+    if (end-now)/5 > 1:
+        scaler.scale_up("docker_id")
+    elif (end-now)/5 < 0:
+        scaler.scale_down("docker_id")
 
 
-scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=2)
+scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=5)
 
 @app.route('/')
 def hello():

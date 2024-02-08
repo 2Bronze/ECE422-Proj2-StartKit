@@ -81,7 +81,7 @@ const pingForData = () => {
         })
 }
 
-setInterval(pingForData, 10000)
+setInterval(pingForData, 5000)
 
 const addData = () => {
     responseLabels.push("ALRIGHT")
