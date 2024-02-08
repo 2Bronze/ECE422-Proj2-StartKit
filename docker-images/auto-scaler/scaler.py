@@ -38,7 +38,7 @@ class Scaler:
     def disable(self):
         self.enabled = False
         
-app = Flask(__name__, template_folder="site", static_folder="site")
+app = Flask(__name__, template_folder="site")
 
 response_times = {}
 docker_replicas = {}
