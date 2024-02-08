@@ -1,11 +1,12 @@
 from docker import client
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_apscheduler import APScheduler
 import requests
 import time
 import atexit
+import sys
 
-from flask import render_template
+SERVICE_ID = sys.argv[1]
 
 class Scaler:
     def __init__(self) -> None:
@@ -37,7 +38,7 @@ class Scaler:
     def disable(self):
         self.enabled = False
         
-app = Flask(__name__, template_folder="site")
+app = Flask(__name__, template_folder="site", static_folder="site")
 
 response_times = {}
 docker_replicas = {}
@@ -48,7 +49,7 @@ scheduler.init_app(app)
 scheduler.start()
 
 def reset_replicas():
-    scaler.force_scale_to(1)
+    scaler.force_scale_to(SERVICE_ID, 1)
 
 INTERVAL_TASK_ID = 'interval-task-id'
 
