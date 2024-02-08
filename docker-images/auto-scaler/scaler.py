@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_apscheduler import APScheduler
 import requests
 import time
+import atexit
 
 from flask import render_template
 
@@ -11,6 +12,10 @@ class Scaler:
         self.client = client.DockerClient(base_url='unix://var/run/docker.sock')
         self.enabled = True
         self.replicas = 1
+        
+    def force_scale_to(self, service_id, replicas):
+        service = self.client.services.get(service_id)
+        service.scale(replicas)
     
     def scale_up(self, service_id):
         if not self.enabled:
@@ -42,13 +47,16 @@ scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
+def reset_replicas():
+    scaler.force_scale_to(1)
+
 INTERVAL_TASK_ID = 'interval-task-id'
- 
- 
+
 def interval_task():
     now = time.time()
     requests.get('http://localhost:8000')
     end = time.time()
+    print("RESPONSE TIME")
     print(end-now)
     response_times[time.time()] = end-now
     docker_replicas[time.time()] = scaler.replicas
@@ -59,7 +67,6 @@ def interval_task():
 
 
 scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10)
- 
 
 @app.route('/')
 def hello():
@@ -75,19 +82,21 @@ def data():
             docker_replicas
         })
 
-@app.route('/enable')
+@app.route('/enable', methods=["POST"])
 def enable():
     scaler.enable()
 
-@app.route('/disable')
+@app.route('/disable', methods=["POST"])
 def disable():
     scaler.disable()
 
-@app.route('/reset')
+@app.route('/reset', methods=["POST"])
 def reset():
     interval_times = []
     response_times = {}
-        
+
 if __name__ == "__main__":
+    # reset to 1 if we ever exit
+    atexit.register(reset_replicas)
     app.run(host="0.0.0.0", port=4444, debug=True)
     

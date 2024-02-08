@@ -4,59 +4,74 @@ let responseTime = []
 let replicas = []
 
 const responseTimeChart = new Chart(ctx, {
-type: 'line',
-data: {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [{
-    label: '# of Votes',
-    data: responseTime,
-    borderWidth: 1
-    }]
-},
-options: {
-    responsive: true,
-    plugins: {
-        title: {
-          display: true,
-          text: 'Chart.js Line Chart'
-        }
+    type: 'line',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+        label: '# of Votes',
+        data: responseTime,
+        borderWidth: 1
+        }]
     },
-    scales: {
-        y: {
-            beginAtZero: true
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+            display: true,
+            text: 'Chart.js Line Chart'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
         }
     }
-}
 });
 
 
 ctx = document.getElementById('replicas');
 
 const replicasChart = new Chart(ctx, {
-type: 'bar',
-data: {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [{
-    label: '# of Votes',
-    data: replicas,
-    borderWidth: 1
-    }]
-},
-options: {
-    scales: {
-    y: {
-        beginAtZero: true
+    type: 'line',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+        label: '# of Votes',
+        data: replicas,
+        borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+              display: true,
+              text: 'Chart.js Line Chart'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
     }
-    }
-}
 });
+
+const enableScaling = () => {
+    axios.post("http://localhost:4444/enable")
+}
+
+const disableScaling = () => {
+    axios.post("http://localhost:4444/disable")
+}
 
 const pingForData = () => {
     axios.get("http://localhost:4444/data")
         .then((data) => {
             console.log(data)
-            responseTime.push()
-            replicas.push()
+            responseTime = list(data.response_times)
+            replicas = list(data.replicas)
         })
 }
 
