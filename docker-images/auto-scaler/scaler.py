@@ -78,10 +78,12 @@ def data():
     if request.method == "POST":
         interval_times.append(request.json["value"])
     else:
-        return jsonify({
-            "response_times": response_times,
+        res = jsonify({"response_times": response_times,
             "docker_replicas": docker_replicas
         })
+        interval_times.clear() # prevent sending same data twice
+        return res
+        
 
 @app.route('/enable', methods=["POST"])
 def enable():
