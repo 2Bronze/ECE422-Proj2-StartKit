@@ -1,6 +1,7 @@
 from docker import client
 from flask import Flask, request, jsonify
 from flask_apscheduler import APScheduler
+import requests
 import time
 
 from flask import render_template
@@ -45,8 +46,11 @@ INTERVAL_TASK_ID = 'interval-task-id'
  
  
 def interval_task():
-    average_time = sum(interval_times)/len(interval_times)
-    response_times[time.time()] = average_time
+    now = time.time()
+    requests.get('http://localhost:8000')
+    end = time.time()
+    print(end-now)
+    response_times[time.time()] = end-now
     docker_replicas[time.time()] = scaler.replicas
     # if average_time > ???:
         # scaler.scale_up("docker_id")
@@ -54,23 +58,22 @@ def interval_task():
         # scaler.scale_down("docker_id")
 
 
-scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=2)
+scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10)
  
 
 @app.route('/')
 def hello():
     return render_template('index.html')
 
-@app.route('/data')
+@app.route('/data', methods=['POST', 'GET'])
 def data():
-    return jsonify({
-        response_times,
-        docker_replicas
-    })
-
-@app.route('/receive', methods=["POST"])
-def receive():
-    interval_times.append(request.json["value"])
+    if request.method == "POST":
+        interval_times.append(request.json["value"])
+    else:
+        return jsonify({
+            response_times,
+            docker_replicas
+        })
 
 @app.route('/enable')
 def enable():
