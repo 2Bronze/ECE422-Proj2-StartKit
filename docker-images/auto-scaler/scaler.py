@@ -1,6 +1,6 @@
 from docker import client
 from flask import Flask, request, Response, jsonify, render_template
-from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 import datetime
 import time
@@ -45,9 +45,7 @@ response_times = {}
 docker_replicas = {}
 interval_times = []
 scaler = Scaler()
-scheduler = APScheduler()
-scheduler.init_app(app)
-scheduler.start()
+scheduler = BackgroundScheduler()
 
 def reset_replicas():
     print("EXITED: Setting replicas to 1...")
@@ -77,7 +75,9 @@ def interval_task():
     docker_replicas[datetime.datetime().strftime('%H:%M:%S')] = scaler.replicas
 
 
-scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10, max_running_jobs=5)
+scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10, max_instances=5)
+scheduler.start()
+
 
 @app.route('/')
 def hello():
