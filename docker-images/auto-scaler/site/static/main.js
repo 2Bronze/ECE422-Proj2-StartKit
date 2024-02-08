@@ -72,9 +72,9 @@ const pingForData = () => {
     axios.get("http://10.2.15.184:4444/data")
         .then(({data}) => {
             console.log(data)
-            responseLabels.push(...Object.keys(data.response_times).map((time) => new Date(time)))
+            responseLabels.push(...Object.keys(data.response_times))
             responseTime.push(...Object.values(data.response_times))
-            replicasLabels.push(...Object.keys(data.docker_replicas).map((time) => new Date(time)))
+            replicasLabels.push(...Object.keys(data.docker_replicas))
             replicas.push(...Object.values(data.docker_replicas))
             responseTimeChart.update()
             replicasChart.update()

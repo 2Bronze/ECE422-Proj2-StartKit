@@ -2,6 +2,7 @@ from docker import client
 from flask import Flask, request, Response, jsonify, render_template
 from flask_apscheduler import APScheduler
 import requests
+import datetime
 import time
 import atexit
 import sys
@@ -54,25 +55,29 @@ def reset_replicas():
     print("EXITED: Set replicas to 1")
 
 INTERVAL_TASK_ID = 'interval-task-id'
+NUM_REQUESTS = 3
+ACCEPTABLE_MAX = 5 # seconds
+ACCEPTABLE_MIN = 3 # seconds
 
 def interval_task():
     now = time.time()
-    # for _ in range(3):
-    requests.get('http://10.2.15.184:8000')
+    for _ in range(NUM_REQUESTS):
+        requests.get('http://10.2.15.184:8000')
     end = time.time()
+    average_response_time = (end-now)/NUM_REQUESTS
     print("RESPONSE TIME")
-    print((end-now))
-    response_times[time.time()] = (end-now)
-    docker_replicas[time.time()] = scaler.replicas
-    if (end-now) > 5:
+    print(average_response_time)
+    if average_response_time > ACCEPTABLE_MAX:
         print("SCALING UP")
         scaler.scale_up(SERVICE_ID)
-    elif (end-now) < 2:
+    elif average_response_time < ACCEPTABLE_MIN:
         print("SCALING DOWN")
         scaler.scale_down(SERVICE_ID)
+    response_times[datetime.datetime().strftime('%H:%M:%S')] = (end-now)
+    docker_replicas[datetime.datetime().strftime('%H:%M:%S')] = scaler.replicas
 
 
-scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10)
+scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10, max_running_jobs=5)
 
 @app.route('/')
 def hello():
