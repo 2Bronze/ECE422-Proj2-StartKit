@@ -55,7 +55,7 @@ INTERVAL_TASK_ID = 'interval-task-id'
 
 def interval_task():
     now = time.time()
-    requests.get('http://localhost:8000')
+    requests.get('http://10.2.15.184:8000')
     end = time.time()
     print("RESPONSE TIME")
     print(end-now)
@@ -82,6 +82,7 @@ def data():
             "docker_replicas": docker_replicas
         })
         response_times.clear() # prevent sending same data twice
+        docker_replicas.clear() # prevent sending same data twice
         return res
         
 
