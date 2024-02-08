@@ -2,11 +2,13 @@ let ctx = document.getElementById('response');
 
 let responseTime = []
 let replicas = []
+let responseLabels = []
+let replicasLabels = []
 
 const responseTimeChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: responseLabels,
         datasets: [{
         label: '# of Votes',
         data: responseTime,
@@ -35,7 +37,7 @@ ctx = document.getElementById('replicas');
 const replicasChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: replicasLabels,
         datasets: [{
         label: '# of Votes',
         data: replicas,
@@ -70,8 +72,10 @@ const pingForData = () => {
     axios.get("http://10.2.15.184:4444/data")
         .then((data) => {
             console.log(data)
-            responseTime = list(data.response_times)
-            replicas = list(data.replicas)
+            responseLabels = Object.keys(data.response_times)
+            responseTime = Object.values(data.response_times)
+            replicasLabels = Object.keys(data.docker_replicas)
+            replicas = Object.values(data.docker_replicas)
         })
 }
 

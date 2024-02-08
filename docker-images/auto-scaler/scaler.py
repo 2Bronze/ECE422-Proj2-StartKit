@@ -1,5 +1,5 @@
 from docker import client
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, Response, jsonify, render_template
 from flask_apscheduler import APScheduler
 import requests
 import time
@@ -86,12 +86,12 @@ def data():
 @app.route('/enable', methods=["POST"])
 def enable():
     scaler.enable()
-    return None
+    return Response(status=200)
 
 @app.route('/disable', methods=["POST"])
 def disable():
     scaler.disable()
-    return None
+    return Response(status=200)
 
 @app.route('/reset', methods=["POST"])
 def reset():
