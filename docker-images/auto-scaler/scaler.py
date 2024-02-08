@@ -81,7 +81,7 @@ def data():
         res = jsonify({"response_times": response_times,
             "docker_replicas": docker_replicas
         })
-        interval_times.clear() # prevent sending same data twice
+        response_times.clear() # prevent sending same data twice
         return res
         
 
