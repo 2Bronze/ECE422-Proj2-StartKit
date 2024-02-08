@@ -1,7 +1,6 @@
 from docker import client
 from flask import Flask, request, jsonify
 from flask_apscheduler import APScheduler
-import sys
 import time
 
 from flask import render_template
@@ -32,9 +31,10 @@ class Scaler:
     def disable(self):
         self.enabled = False
         
-app = Flask(__name__)
+app = Flask(__name__, template_folder="site")
 
 response_times = {}
+docker_replicas = {}
 interval_times = []
 scaler = Scaler()
 scheduler = APScheduler()
@@ -47,6 +47,7 @@ INTERVAL_TASK_ID = 'interval-task-id'
 def interval_task():
     average_time = sum(interval_times)/len(interval_times)
     response_times[time.time()] = average_time
+    docker_replicas[time.time()] = scaler.replicas
     # if average_time > ???:
         # scaler.scale_up("docker_id")
     # elif average_time < ???:
@@ -58,11 +59,14 @@ scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', s
 
 @app.route('/')
 def hello():
-    return render_template('./site.index.html')
+    return render_template('index.html')
 
 @app.route('/data')
 def data():
-    return jsonify(response_times)
+    return jsonify({
+        response_times,
+        docker_replicas
+    })
 
 @app.route('/receive', methods=["POST"])
 def receive():
@@ -82,15 +86,5 @@ def reset():
     response_times = {}
         
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
-    # id = sys.argv[1]
-    # print(id)
-    # scaler = Scaler()
-    # print("Scaled Up")
-    # scaler.scale_up(id)
-    
-    # time.sleep(60)
-    
-    # print("Scaled Down")
-    # scaler.scale_down(id)
+    app.run(host="0.0.0.0", port=4444, debug=True)
     
