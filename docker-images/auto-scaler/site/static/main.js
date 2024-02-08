@@ -76,6 +76,8 @@ const pingForData = () => {
             responseTime = Object.values(data.response_times)
             replicasLabels = Object.keys(data.docker_replicas)
             replicas = Object.values(data.docker_replicas)
+            responseTimeChart.update()
+            replicasChart.update()
         })
 }
 
