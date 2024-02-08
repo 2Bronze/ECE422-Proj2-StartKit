@@ -79,17 +79,19 @@ def data():
         interval_times.append(request.json["value"])
     else:
         return jsonify({
-            response_times,
-            docker_replicas
+            "response_times": response_times,
+            "docker_replicas": docker_replicas
         })
 
 @app.route('/enable', methods=["POST"])
 def enable():
     scaler.enable()
+    return None
 
 @app.route('/disable', methods=["POST"])
 def disable():
     scaler.disable()
+    return None
 
 @app.route('/reset', methods=["POST"])
 def reset():
