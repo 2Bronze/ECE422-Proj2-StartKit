@@ -63,9 +63,9 @@ def interval_task():
     response_times[time.time()] = (end-now)/5
     docker_replicas[time.time()] = scaler.replicas
     if (end-now)/5 > 1:
-        scaler.scale_up("docker_id")
+        scaler.scale_up(SERVICE_ID)
     elif (end-now)/5 < 0:
-        scaler.scale_down("docker_id")
+        scaler.scale_down(SERVICE_ID)
 
 
 scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=5)
