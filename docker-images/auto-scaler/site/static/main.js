@@ -70,7 +70,7 @@ const disableScaling = () => {
 
 const pingForData = () => {
     axios.get("http://10.2.15.184:4444/data")
-        .then((data) => {
+        .then(({data}) => {
             console.log(data)
             responseLabels = Object.keys(data.response_times)
             responseTime = Object.values(data.response_times)
