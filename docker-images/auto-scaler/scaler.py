@@ -22,14 +22,14 @@ class Scaler:
         if not self.enabled:
             return
         service = self.client.services.get(service_id)
-        self.replicas += 10
+        self.replicas += 1
         service.scale(self.replicas)
         
     def scale_down(self, service_id):
-        if not self.enabled:
+        if not self.enabled or self.replicas == 1:
             return
         service = self.client.services.get(service_id)
-        self.replicas -= 10
+        self.replicas -= 1
         service.scale(self.replicas)
     
     def enable(self):
@@ -49,26 +49,28 @@ scheduler.init_app(app)
 scheduler.start()
 
 def reset_replicas():
+    print("EXITED: Setting replicas to 1...")
     scaler.force_scale_to(SERVICE_ID, 1)
+    print("EXITED: Set replicas to 1")
 
 INTERVAL_TASK_ID = 'interval-task-id'
 
 def interval_task():
     now = time.time()
-    for _ in range(5):
+    for _ in range(3):
         requests.get('http://10.2.15.184:8000')
     end = time.time()
     print("RESPONSE TIME")
-    print((end-now)/5)
+    print((end-now)/3)
     response_times[time.time()] = (end-now)/5
     docker_replicas[time.time()] = scaler.replicas
-    if (end-now)/5 > 1:
+    if (end-now)/3 > 10:
         scaler.scale_up(SERVICE_ID)
-    elif (end-now)/5 < 0:
+    elif (end-now)/3 < 0:
         scaler.scale_down(SERVICE_ID)
 
 
-scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=5)
+scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10)
 
 @app.route('/')
 def hello():
