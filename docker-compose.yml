@@ -45,7 +45,9 @@ services:
     command: -f /mnt/locust/locustfile.py --worker --master-host locust
 
   scaler:
-    image: test
+    image: test:latest
+    ports:
+      - "4444:4444"
     deploy:
       resources:
         limits:
