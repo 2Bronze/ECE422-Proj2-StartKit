@@ -59,15 +59,15 @@ const replicasChart = new Chart(ctx, {
 });
 
 const enableScaling = () => {
-    axios.post("http://localhost:4444/enable")
+    axios.post("http://10.2.15.184:4444//enable")
 }
 
 const disableScaling = () => {
-    axios.post("http://localhost:4444/disable")
+    axios.post("http://10.2.15.184:4444//disable")
 }
 
 const pingForData = () => {
-    axios.get("http://localhost:4444/data")
+    axios.get("http://10.2.15.184:4444/data")
         .then((data) => {
             console.log(data)
             responseTime = list(data.response_times)
