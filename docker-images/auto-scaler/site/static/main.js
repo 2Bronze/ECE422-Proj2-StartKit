@@ -20,7 +20,7 @@ const responseTimeChart = new Chart(ctx, {
         plugins: {
             title: {
             display: true,
-            text: 'Chart.js Line Chart'
+            text: 'Response Time'
             }
         },
         scales: {
@@ -49,7 +49,7 @@ const replicasChart = new Chart(ctx, {
         plugins: {
             title: {
               display: true,
-              text: 'Chart.js Line Chart'
+              text: 'Web Replicas'
             }
         },
         scales: {

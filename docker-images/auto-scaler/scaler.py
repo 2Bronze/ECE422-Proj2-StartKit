@@ -57,16 +57,18 @@ INTERVAL_TASK_ID = 'interval-task-id'
 
 def interval_task():
     now = time.time()
-    for _ in range(3):
-        requests.get('http://10.2.15.184:8000')
+    # for _ in range(3):
+    requests.get('http://10.2.15.184:8000')
     end = time.time()
     print("RESPONSE TIME")
-    print((end-now)/3)
-    response_times[time.time()] = (end-now)/5
+    print((end-now))
+    response_times[time.time()] = (end-now)
     docker_replicas[time.time()] = scaler.replicas
-    if (end-now)/3 > 10:
+    if (end-now) > 5:
+        print("SCALING UP")
         scaler.scale_up(SERVICE_ID)
-    elif (end-now)/3 < 0:
+    elif (end-now) < 2:
+        print("SCALING DOWN")
         scaler.scale_down(SERVICE_ID)
 
 
