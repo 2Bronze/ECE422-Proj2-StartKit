@@ -67,7 +67,7 @@ def interval_task():
         # scaler.scale_down("docker_id")
 
 
-scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10)
+scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=2)
 
 @app.route('/')
 def hello():

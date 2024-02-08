@@ -61,11 +61,11 @@ const replicasChart = new Chart(ctx, {
 });
 
 const enableScaling = () => {
-    axios.post("http://10.2.15.184:4444//enable")
+    axios.post("http://10.2.15.184:4444/enable")
 }
 
 const disableScaling = () => {
-    axios.post("http://10.2.15.184:4444//disable")
+    axios.post("http://10.2.15.184:4444/disable")
 }
 
 const pingForData = () => {
