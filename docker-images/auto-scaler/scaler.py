@@ -1,7 +1,7 @@
 from docker import client
 from flask import Flask, request, Response, jsonify, render_template
 from apscheduler.schedulers.background import BackgroundScheduler
-from time import time, time_ns
+from time import time
 import requests
 import atexit
 import sys
@@ -70,8 +70,8 @@ def interval_task():
     elif average_response_time < ACCEPTABLE_MIN:
         print("SCALING DOWN")
         scaler.scale_down(SERVICE_ID)
-    response_times[int(time_ns()//1000)] = average_response_time
-    docker_replicas[int(time_ns()//1000)] = scaler.replicas
+    response_times[int(time()*1000)] = average_response_time
+    docker_replicas[int(time()*1000)] = scaler.replicas
 
 
 scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10, max_instances=5)
