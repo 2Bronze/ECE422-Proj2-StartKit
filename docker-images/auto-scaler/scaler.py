@@ -117,7 +117,7 @@ def disable():
 
 @app.route('/current')
 def current():
-    return Response(scaler.enabled, status=200)
+    return Response(str(scaler.enabled), status=200)
 
 @app.route('/start', methods=["POST"])
 def start():
