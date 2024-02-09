@@ -6,29 +6,31 @@ import requests
 import atexit
 import sys
 
-SERVICE_ID = sys.argv[1]
-
 class Scaler:
     def __init__(self) -> None:
         self.client = client.DockerClient(base_url='unix://var/run/docker.sock')
+        self.service_id = ""
+        for service in self.client.services.list():
+            if service.name.find("scaler") >= 0:
+                self.service_id = service.short_id
         self.enabled = True
         self.replicas = 1
         
-    def force_scale_to(self, service_id, replicas):
-        service = self.client.services.get(service_id)
+    def force_scale_to(self, replicas):
+        service = self.client.services.get(self.service_id)
         service.scale(replicas)
     
-    def scale_up(self, service_id):
+    def scale_up(self):
         if not self.enabled:
             return
-        service = self.client.services.get(service_id)
+        service = self.client.services.get(self.service_id)
         self.replicas += 1
         service.scale(self.replicas)
         
-    def scale_down(self, service_id):
+    def scale_down(self):
         if not self.enabled or self.replicas == 1:
             return
-        service = self.client.services.get(service_id)
+        service = self.client.services.get(self.service_id)
         self.replicas -= 1
         service.scale(self.replicas)
     
@@ -47,7 +49,7 @@ scheduler = BackgroundScheduler()
 
 def reset_replicas():
     print("EXITED: Setting replicas to 1...")
-    scaler.force_scale_to(SERVICE_ID, 1)
+    scaler.force_scale_to(1)
     print("EXITED: Set replicas to 1")
 
 INTERVAL_TASK_ID = 'interval-task-id'
@@ -65,10 +67,10 @@ def interval_task():
     print(average_response_time)
     if average_response_time > ACCEPTABLE_MAX:
         print("SCALING UP")
-        scaler.scale_up(SERVICE_ID)
+        scaler.scale_up()
     elif average_response_time < ACCEPTABLE_MIN:
         print("SCALING DOWN")
-        scaler.scale_down(SERVICE_ID)
+        scaler.scale_down()
     response_times[int(time()*1000)] = average_response_time
     docker_replicas[int(time()*1000)] = scaler.replicas
 

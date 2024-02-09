@@ -1,6 +1,5 @@
 FROM python:3.11-alpine
-ARG SERVICE_ID
 ADD . /code
 WORKDIR /code
 RUN pip install -r requirements.txt
-CMD ["python3", "scaler.py", "$SERVICE_ID"]
+CMD ["python3", "scaler.py"]
