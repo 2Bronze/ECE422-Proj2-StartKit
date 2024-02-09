@@ -10,6 +10,10 @@ body {
     padding: 0;
 }
 
+canvas {
+    max-height: 40vh;
+}
+
 .header {
     padding: 10px;
     box-shadow: var(--background) 0 0 5px;
