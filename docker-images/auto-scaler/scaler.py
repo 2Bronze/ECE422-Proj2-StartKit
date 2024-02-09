@@ -1,5 +1,5 @@
 from docker import client
-from flask import Flask, request, Response, jsonify, render_template
+from flask import Flask, Response, jsonify, render_template
 from apscheduler.schedulers.background import BackgroundScheduler
 from time import time
 import requests
@@ -42,7 +42,6 @@ app = Flask(__name__, template_folder="site", static_folder="site/static", stati
 
 response_times = {}
 docker_replicas = {}
-interval_times = []
 scaler = Scaler()
 scheduler = BackgroundScheduler()
 
@@ -81,17 +80,15 @@ scheduler.start()
 def hello():
     return render_template('index.html')
 
-@app.route('/data', methods=['POST', 'GET'])
+@app.route('/data', methods=['GET'])
 def data():
-    if request.method == "POST":
-        interval_times.append(request.json["value"])
-    else:
-        res = jsonify({"response_times": response_times,
-            "docker_replicas": docker_replicas
-        })
-        response_times.clear() # prevent sending same data twice
-        docker_replicas.clear() # prevent sending same data twice
-        return res
+    res = jsonify({
+        "response_times": response_times,
+        "docker_replicas": docker_replicas
+    })
+    response_times.clear() # prevent sending same data twice
+    docker_replicas.clear() # prevent sending same data twice
+    return res
         
 
 @app.route('/enable', methods=["POST"])
@@ -106,11 +103,12 @@ def disable():
 
 @app.route('/reset', methods=["POST"])
 def reset():
-    interval_times = []
-    response_times = {}
+    response_times.clear()
+    docker_replicas.clear()
+    return Response(status=200)
 
 if __name__ == "__main__":
     # reset to 1 if we ever exit
     atexit.register(reset_replicas)
-    app.run(host="0.0.0.0", port=4444, debug=False)
+    app.run(host="0.0.0.0", port=4444, debug=False) # disable debug to prevent launch 2 schedulers
     
