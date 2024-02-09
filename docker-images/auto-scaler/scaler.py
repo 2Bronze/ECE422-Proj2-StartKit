@@ -5,7 +5,6 @@ from time import time
 import requests
 import atexit
 import gevent
-import sys
 
 class Scaler:
     def __init__(self) -> None:
@@ -47,6 +46,7 @@ response_times = {}
 docker_replicas = {}
 scaler = Scaler()
 scheduler = BackgroundScheduler()
+isRecord = False
 
 def reset_replicas():
     print("EXITED: Setting replicas to 1...")
@@ -67,12 +67,7 @@ def get_response_time():
 
 def interval_task():
     tasks = []
-    # now = time()
     tasks = [gevent.spawn(get_response_time) for _ in range(NUM_REQUESTS)]
-    # for _ in range(NUM_REQUESTS):
-    #     tasks.append(gevent.spawn(get_response_time))
-    #     # requests.get('http://10.2.15.184:8000')
-    # end = time()
     gevent.joinall(tasks)
     response = [task.value for task in tasks]
     
@@ -85,6 +80,8 @@ def interval_task():
     elif average_response_time < ACCEPTABLE_MIN:
         print("SCALING DOWN")
         scaler.scale_down()
+    if not isRecord:
+        return
     response_times[int(time()*1000)] = average_response_time
     docker_replicas[int(time()*1000)] = scaler.replicas
 
@@ -117,8 +114,20 @@ def disable():
     scaler.disable()
     return Response(status=200)
 
-@app.route('/reset', methods=["POST"])
-def reset():
+
+@app.route('/current')
+def current():
+    return Response(scaler.enabled, status=200)
+
+@app.route('/start', methods=["POST"])
+def start():
+    isRecord = True
+    return Response(status=200)
+    
+
+@app.route('/stop', methods=["POST"])
+def stop():
+    isRecord = False
     response_times.clear()
     docker_replicas.clear()
     return Response(status=200)

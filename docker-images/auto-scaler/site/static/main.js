@@ -115,17 +115,21 @@ setInterval(pingForData, 10000)
 const fetchCurrentData = () => {
     axios.get("http://10.2.15.184:4444/current")
         .then(({data}) => {
-            responseLabels.push(...Object.keys(data.response_times).map((time) => (new Date(parseInt(time))).toLocaleTimeString("en-US")))
-            responseTime.push(...Object.values(data.response_times))
-            replicasLabels.push(...Object.keys(data.docker_replicas).map((time) => (new Date(parseInt(time))).toLocaleTimeString("en-US")))
-            replicas.push(...Object.values(data.docker_replicas))
-            responseTimeChart.update()
-            replicasChart.update()
+            console.log(data)
         })
 }
 
+fetchCurrentData()
+
+const startTracking = () => {
+    axios.post("http://10.2.15.184:4444/start")
+}
+
+const stopTracking = () => {
+    axios.post("http://10.2.15.184:4444/stop")
+}
+
 const resetData = () => {
-    axios.post("http://10.2.15.184:4444/reset")
     responseTime.splice(0, responseTime.length)
     replicas.splice(0, replicas.length)
     responseLabels.splice(0, responseLabels.length)
