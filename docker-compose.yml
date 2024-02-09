@@ -36,13 +36,13 @@ services:
      - "8089:8089"
     volumes:
       - ./:/mnt/locust
-    command: -f /mnt/locust/locustfile.py --master -H http://10.2.15.184:8000/
+    command: -f /mnt/locust/locustfile.py --master -H http://10.2.15.184:8000/ --class-picker
 
   locust_worker:
     image: locustio/locust
     volumes:
       - ./:/mnt/locust
-    command: -f /mnt/locust/locustfile.py --worker --master-host locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host locust --class-picker
 
   scaler:
     image: scaler:latest
