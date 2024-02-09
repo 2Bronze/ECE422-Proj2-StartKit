@@ -85,14 +85,16 @@ const replicasChart = new Chart(ctx, {
 const enableScaling = () => {
     axios.post("http://10.2.15.184:4444/enable")
         .then(() => {
-            scalarStatusUI.classList.replace('disabled', 'enabled')
+            if (scalarStatusUI)
+                scalarStatusUI.classList.replace('disabled', 'enabled')
         })
 }
 
 const disableScaling = () => {
     axios.post("http://10.2.15.184:4444/disable")
         .then(() => {
-            scalarStatusUI.classList.replace('enabled', 'disabled')
+            if(scalarStatusUI)
+                scalarStatusUI.classList.replace('enabled', 'disabled')
         })
 }
 
