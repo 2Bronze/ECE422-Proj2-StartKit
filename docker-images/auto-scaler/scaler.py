@@ -46,7 +46,6 @@ response_times = {}
 docker_replicas = {}
 scaler = Scaler()
 scheduler = BackgroundScheduler()
-isRecord = False
 
 def reset_replicas():
     print("EXITED: Setting replicas to 1...")
@@ -80,8 +79,6 @@ def interval_task():
     elif average_response_time < ACCEPTABLE_MIN:
         print("SCALING DOWN")
         scaler.scale_down()
-    if not isRecord:
-        return
     response_times[int(time()*1000)] = average_response_time
     docker_replicas[int(time()*1000)] = scaler.replicas
 
@@ -118,19 +115,6 @@ def disable():
 @app.route('/current')
 def current():
     return Response(str(scaler.enabled), status=200)
-
-@app.route('/start', methods=["POST"])
-def start():
-    isRecord = True
-    return Response(status=200)
-    
-
-@app.route('/stop', methods=["POST"])
-def stop():
-    isRecord = False
-    response_times.clear()
-    docker_replicas.clear()
-    return Response(status=200)
 
 if __name__ == "__main__":
     # reset to 1 if we ever exit

@@ -115,19 +115,15 @@ setInterval(pingForData, 10000)
 const fetchCurrentData = () => {
     axios.get("http://10.2.15.184:4444/current")
         .then(({data}) => {
-            console.log(data)
+            if (data === "True") {
+                scalarStatusUI.classList.replace('disabled', 'enabled')
+            } else {
+                scalarStatusUI.classList.replace('enabled', 'disabled')
+            }
         })
 }
 
 fetchCurrentData()
-
-const startTracking = () => {
-    axios.post("http://10.2.15.184:4444/start")
-}
-
-const stopTracking = () => {
-    axios.post("http://10.2.15.184:4444/stop")
-}
 
 const resetData = () => {
     responseTime.splice(0, responseTime.length)
