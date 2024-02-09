@@ -11,7 +11,7 @@ class Scaler:
         self.client = client.DockerClient(base_url='unix://var/run/docker.sock')
         self.service_id = ""
         for service in self.client.services.list():
-            if service.name.find("scaler") >= 0:
+            if service.name.find("web") >= 0:
                 self.service_id = service.short_id
         self.enabled = True
         self.replicas = 1
