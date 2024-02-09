@@ -54,7 +54,7 @@ def reset_replicas():
 INTERVAL_TASK_ID = 'interval-task-id'
 NUM_REQUESTS = 3
 ACCEPTABLE_MAX = 5 # seconds
-ACCEPTABLE_MIN = 3 # seconds
+ACCEPTABLE_MIN = 2 # seconds
 
 def interval_task():
     now = time()
@@ -76,7 +76,6 @@ def interval_task():
 
 scheduler.add_job(id=INTERVAL_TASK_ID, func=interval_task, trigger='interval', seconds=10, max_instances=5)
 scheduler.start()
-
 
 @app.route('/')
 def hello():
