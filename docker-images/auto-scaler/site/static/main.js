@@ -130,4 +130,6 @@ const resetData = () => {
     replicas.splice(0, replicas.length)
     responseLabels.splice(0, responseLabels.length)
     replicasLabels.splice(0, replicasLabels.length)
+    responseTimeChart.update()
+    replicasChart.update()
 }
