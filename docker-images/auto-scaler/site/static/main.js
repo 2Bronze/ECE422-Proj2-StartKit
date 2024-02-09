@@ -72,7 +72,7 @@ const pingForData = () => {
     axios.get("http://10.2.15.184:4444/data")
         .then(({data}) => {
             console.log(data)
-            responseLabels.push(...Object.keys(data.response_times).map((time) => new Date(time).toLocaleDateString("en-US")))
+            responseLabels.push(...Object.keys(data.response_times).map((time) => {console.log(time); return new Date(time).toLocaleDateString("en-US")}))
             responseTime.push(...Object.values(data.response_times))
             replicasLabels.push(...Object.keys(data.docker_replicas).map((time) => new Date(time).toLocaleDateString("en-US")))
             replicas.push(...Object.values(data.docker_replicas))
@@ -81,7 +81,7 @@ const pingForData = () => {
         })
 }
 
-setInterval(pingForData, 5000)
+setInterval(pingForData, 10000)
 
 const addData = () => {
     responseLabels.push("ALRIGHT")

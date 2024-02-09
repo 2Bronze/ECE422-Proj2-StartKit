@@ -113,5 +113,5 @@ def reset():
 if __name__ == "__main__":
     # reset to 1 if we ever exit
     atexit.register(reset_replicas)
-    app.run(host="0.0.0.0", port=4444, debug=True)
+    app.run(host="0.0.0.0", port=4444, debug=False)
     
