@@ -4,6 +4,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from time import time
 import requests
 import atexit
+import gevent
 import sys
 
 class Scaler:
@@ -57,12 +58,25 @@ NUM_REQUESTS = 3
 ACCEPTABLE_MAX = 5 # seconds
 ACCEPTABLE_MIN = 2 # seconds
 
-def interval_task():
+def get_response_time():
     now = time()
-    for _ in range(NUM_REQUESTS):
-        requests.get('http://10.2.15.184:8000')
+    requests.get('http://10.2.15.184:8000')
     end = time()
-    average_response_time = (end-now)/NUM_REQUESTS
+    return end-now
+
+
+def interval_task():
+    tasks = []
+    # now = time()
+    tasks = [gevent.spawn(get_response_time) for _ in range(NUM_REQUESTS)]
+    # for _ in range(NUM_REQUESTS):
+    #     tasks.append(gevent.spawn(get_response_time))
+    #     # requests.get('http://10.2.15.184:8000')
+    # end = time()
+    gevent.joinall(tasks)
+    response = [task.value for task in tasks]
+    
+    average_response_time = sum(response)/len(response)
     print("RESPONSE TIME")
     print(average_response_time)
     if average_response_time > ACCEPTABLE_MAX:

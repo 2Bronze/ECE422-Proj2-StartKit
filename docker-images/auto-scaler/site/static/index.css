@@ -1,3 +1,35 @@
 * {
     font-family: 'Courier New', Courier, monospace;
+    --background: #02182B;
+    --highlight: #D7263D;
+    --secondary: #448FA3;
+    margin: 0;
+}
+
+body {
+    padding: 0;
+}
+
+.header {
+    padding: 10px;
+    box-shadow: var(--background) 0 0 5px;
+    background-color: var(--background);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.enabled {
+    background-color: green;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.disabled {
+    background-color: red;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
 }

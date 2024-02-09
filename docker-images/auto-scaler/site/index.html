@@ -7,13 +7,38 @@
         <link rel="stylesheet" href="./static/index.css"/>
     </head>
     <body>
-        HELLO!
+        <div class="header">
+            <div>ECE 420 Lab 1</div>
+            <div class="header-buttons">
+                <button onclick="enableScaling()">Enable</button>
+                <button onclick="disableScaling()">Disable</button>
+                <button onclick="resetData()">Reset Data</button>
+            </div>
+            <div class="header">
+                <div style="margin-right: 5px;">Scaler State</div>
+                <div class="enabled" id="status"></div>
+            </div>
+        </div>
+        <!-- <div>
+            <label>
+                Force Scale To:
+            </label>
+            <input>
+
+            <label>
+                Min Response Time:
+                <input>
+            </label>
+            <label>
+                Max Response Time:
+                <input>
+            </label>
+        </div> -->
         <canvas id="response"></canvas>
         <canvas id="replicas"></canvas>
-        <button onclick="enableScaling()">Enable</button>
-        <button onclick="disableScaling()">Disable</button>
-        <button onclick="pingForData()">FetchData</button>
     </body>
+
+        
 
     <script src="./static/main.js"></script>
 
